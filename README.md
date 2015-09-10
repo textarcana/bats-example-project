@@ -4,6 +4,10 @@
 
     bats test/
 
+## Dependencies
+
+You need to [install BATS.](https://github.com/sstephenson/bats#installing-bats-from-source)
+
 
 ## Credits
 
