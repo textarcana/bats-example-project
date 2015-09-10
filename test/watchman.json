@@ -1,0 +1,25 @@
+[
+    "trigger",
+    "/Users/noahsussman/bash_xunit_starter_kit",
+    {
+        "name": "run_tests",
+        "command": ["test/run"],
+        "append_files": false,
+        "stdin": [
+            "name",
+            "exists",
+            "new",
+            "size",
+            "mode"
+        ],
+        "stdout" : ">.analysis/watch_test.log",
+        "expression": [
+            "allof",
+            [
+                "match",
+                "*",
+                "wholename"
+            ]
+        ]
+    }
+]

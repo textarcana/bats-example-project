@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+touch .analysis/watch_test.log
+
+watchman -j < test/watchman.json
+
+tail -f .analysis/watch_test.log &
