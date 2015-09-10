@@ -4,6 +4,10 @@
 
     bats test/
 
+## Screenshots
+
+![result of running bats test/](https://www.evernote.com/l/AAMsMWgOtoRAPJrRKlsyIYwk1vcb_J1py-o)
+
 ## Dependencies
 
 You need to [install BATS.](https://github.com/sstephenson/bats#installing-bats-from-source)
