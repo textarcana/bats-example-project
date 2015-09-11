@@ -1,3 +1,69 @@
 #!/usr/bin/env bash
 
-bats test/
+test -d .analysis || mkdir .analysis
+
+test -e .analysis/tap.log \
+    && mv .analysis/tap.log .analysis/old.log
+
+bats test/ &> .analysis/tap.log
+
+with_status=$?
+
+failures=$(
+    egrep '^not ok ' .analysis/tap.log
+)
+
+total_tests_run=$(
+    head -n1 .analysis/tap.log \
+        | cut -d'.' -f3
+)
+
+count_of_failures=$(
+    egrep '^not ok ' .analysis/tap.log \
+        | wc -l \
+        | tr -d " "
+)
+
+if [ -z "$failures" ]; then
+    if [ -e .analysis/failure.lock ]; then
+        # Clear the lockfiles.
+
+        rm .analysis/failure.lock
+        rm .analysis/attempts.lock
+
+        echo "ok all tests are fixed!"
+        echo "#     (=^･ｪ･^=)"
+    fi
+else
+    echo
+    echo "$failures"
+
+    echo "# $count_of_failures out of $total_tests_run tests FAILED!"
+
+    if [ -e .analysis/failure.lock ]; then
+        # Show the time elapsed since lockfile was created.
+
+        timestamp="$(cat .analysis/failure.lock)"
+
+        datediff "$timestamp" \
+                 "$(date -Is)" \
+                 -f "# %Mm %Ss since breaking the tests."
+
+        diff -q ".analysis/old.log" ".analysis/tap.log" &> /dev/null \
+            && echo 1 >> .analysis/attempts.lock \
+            && echo "# $(cat .analysis/attempts.lock | wc -l | tr -d ' ') attempts to fix."
+
+        diff -q ".analysis/old.log" ".analysis/tap.log" &> /dev/null \
+             || echo "# STILL FAILING but results have changed:"
+
+        diff -U 0 ".analysis/old.log" ".analysis/tap.log" 2> /dev/null \
+             | grep -v "^@@"
+
+    else
+        # Create the lockfile.
+        date -Is > .analysis/failure.lock
+    fi
+
+fi
+
+exit $with_status

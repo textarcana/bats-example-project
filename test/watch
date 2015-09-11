@@ -1,7 +1,19 @@
 #!/usr/bin/env bash
 
+# Create a .analysis directory in the root of the repo, if it doesn't
+# already exist.
+
+test -d .analysis || mkdir .analysis
+
 touch .analysis/watch_test.log
 
+# Start watchman and load the config JSON.
+
 watchman -j < test/watchman.json
+
+# Publish test results whenever the test log changes. Kill the
+# previously running tail first.
+
+kill $(ps | egrep 'tail.*watch_test.log' | head -n1 | cut -d' ' -f1) &> /dev/null
 
 tail -f .analysis/watch_test.log &

@@ -1,4 +1,4 @@
-FLUNK="oh my yes"
+# FLUNK="oh my yes"
 
 @test "truth should be true" {
     true

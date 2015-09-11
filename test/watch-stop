@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Shut down watchman server
+watchman --no-spawn shutdown-server
+
+# Kill the log tail.
+kill $(ps | egrep 'tail.*watch_test.log' | head -n1 | cut -d' ' -f1)
